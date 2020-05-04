@@ -81,38 +81,34 @@ headers = {
 
 if len(sys.argv) > 1:
     print(str(sys.argv))
-    for x in range(len(sys.argv)):
-        #print(" X = " + str(x) + " sys.argv = " + str(sys.argv[int(x)]) + "\n")
-        if int(x) > 0:
-            #print(x)
+        
 
+    querry_list = sys.argv[1:]
+    print(querry_list)
 
-            querry_list = sys.argv[1:]
-            print(querry_list)
+    if verify_file() == True:
+        data = query_json()
+        for term in querry_list:
+            if str(term) in data:
+                print("\nItem - " + str(term) + " - found in file")
 
-            if verify_file() == True:
-                data = query_json()
-                for term in querry_list:
-                    if str(term) in data:
-                        print("\nItem found in file")
+                ### display info in json file
+                print("\nFinding - " + str(term) + " - in text.json file\n")
 
-                        ### display info in json file
-                        print("\nFinding - " + str(term) + " - in text.json file\n")
+                for item in data[term]:
+                    print("Definition - " + str(term) + " - found \n --->" + str(item) + "\n")
+                pass
+            else:
 
-                        #print("Term - " + str(term) + " - data[term] - " + str(data[term]) + "\n")
-                        for item in data[term]:
-                            print("Definition found \n --->" + str(item) + "\n")
-                        pass
-                    else:
-                        #add the item & definitions to json file
-                        print("Term to be added --> " + str(term) + "\n")
-                        results_from_query = Process_user_input_and_server_response(term)
+                #add the item & definitions to json file
+                print("Term to be added --> " + str(term) + "\n")
+                results_from_query = Process_user_input_and_server_response(term)
 
-                        #request data and append new info
-                        append_file_json(results_from_query,term)
-                        for item in results_from_query:
-                            print("Definition found \n --->" + str(item) + "\n")
-                        pass
+                #request data and append new info
+                append_file_json(results_from_query,term)
+                for item in results_from_query:
+                    print("Definition found \n --->" + str(item) + "\n")
+                pass
 else:
     #no cmd request
     input_term = input("What term do you want to look for? \nYou can make multiple requests by seperating your input with commas.\n")
@@ -129,11 +125,11 @@ else:
                 ### display info in json file
                 print("\nFinding - " + str(term) + " - in text.json file\n")
 
-                #print("Term - " + str(term) + " - data[term] - " + str(data[term]) + "\n")
                 for item in data[term]:
                     print("Definition found \n --->" + str(item) + "\n")
                 pass
             else:
+
                 #add the item & definitions to json file
                 print("Term to be added --> " + str(term) + "\n")
                 results_from_query = Process_user_input_and_server_response(term)
