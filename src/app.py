@@ -24,8 +24,8 @@ def query_json():
         if data == None:
             print("\nData file is empty...\n")
         else:
-            print("\nLoading data file...\n")
-            print(data)
+            print("\nLoading data file...")
+            #print(data)
             return data
 
 def create_file_json():
@@ -34,8 +34,8 @@ def create_file_json():
 
 def append_file_json(data_to_append,term):
     file_data = query_json()
-    print("\nTerm --> " + str(term) + "\n")
-    print("\nData to append--> " + str(data_to_append) + "\n")
+    #print("\nTerm --> " + str(term) + "\n")
+    #print("\nData to append--> " + str(data_to_append) + "\n")
     tmpDict = {}
     tmpList = []
     for item in range(len(data_to_append)):
@@ -48,12 +48,12 @@ def append_file_json(data_to_append,term):
 
 def verify_file():
     if where_json('data.json'):
-        print("File Found\n")
+        #print("File Found\n")
         return True
     else:
-        print("file not found\n")
+        #print("file not found\n")
         create_file_json()
-        print("File Created\n")
+        #print("File Created\n")
         return True
 
 url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
@@ -64,13 +64,6 @@ headers = {
     }
 
 querry_list = input_term.split (",")
-#print(querry_list)
-#print(len(querry_list))
-
-# def process_and_display_data(informatoion):
-#     body = response.json()
-#     dict_layer1 = body["list"]
-#     return dict_layer1
     
 def Process_user_input_and_server_response(user_input_term):
 #    for items in range(len(querry_list)):
@@ -89,7 +82,7 @@ def Process_user_input_and_server_response(user_input_term):
 
 if verify_file() == True:
     data = query_json()
-    print("\nThis is the data returned form .json file\n" + str(data))
+    #print("\nThis is the data returned form .json file\n" + str(data))
     for term in querry_list:
         if str(term) in data:
             print("\nItem found in file\n")
@@ -100,49 +93,18 @@ if verify_file() == True:
 
             ### display info in json file
             print("\nFinding - " + str(term) + " - in text.json file\n")
-            print("Term - " + str(term) + " - data[term] - " + str(data[term]))
+            #print("Term - " + str(term) + " - data[term] - " + str(data[term]) + "\n")
+            for item in data[term]:
+                print("Definition found \n --->" + str(item) + "\n")
         else:
             #add the item & definitions to json file
-            print("Term to be added --> " + str(term))
+            print("Term to be added --> " + str(term) + "\n")
             results_from_query = Process_user_input_and_server_response(term)
             
             #temp_dict = {str(term):str(list(results_from_query))}
 
             #request data and append new info
             append_file_json(results_from_query,term)
-
+            for item in results_from_query:
+                print("Definition found \n --->" + str(item) + "\n")
             pass
-
-# if len(querry_list) <= 1:
-#     if verify_file() == True:
-        
-#         #check here if word is in the data file
-#         data = query_json()
-#         print("\nThis is the data returned form .json file\n" + str(data))
-
-#         #check if term is in text.json file
-#         if str(input_term) in data:
-#             print("\nItem found in file\n")
-#             print(str(data[str(input_term)]))
-
-#             query_dict = {"term":input_term}
-#             response = requests.request("GET", url, headers=headers, params=query_dict)
-#             request_definition = process_and_display_data(response)
-#             #print(list(request_definition))
-#             for items in request_definition:
-#                 print(items["definition"] + "\n")
-#         else:
-#             print("\nItem NOT found in file\n")
-
-# else:
-#     if verify_file() == True:
-#         for x in range(len(querry_list)):
-#             #print(x)
-#             #print(querry_list[x])
-#             query_dict = {}
-#             query_dict["term"] = querry_list[x]
-#             response = None
-#             response = requests.request("GET", url, headers=headers, params=query_dict)
-#             request_definition = process_and_display_data(response)
-#             for items in request_definition:
-#                 print(items["definition"] + "\n")
