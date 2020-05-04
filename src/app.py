@@ -1,4 +1,4 @@
-import requests, os, json
+import requests, os, json, sys
 
 # Retrieve your API credentials from the .env file
 if os.getenv("API_KEY") is None or os.getenv("API_KEY") == "":
@@ -13,7 +13,7 @@ API_KEY = os.getenv("API_KEY")
 #print(API_HOST)
 #print(API_KEY)
 
-input_term = input("What term do you want to look for? \nYou can make multiple requests by seperating your input with commas.\n")
+
 
 def where_json(file_name):
     return os.path.exists(file_name)
@@ -56,14 +56,7 @@ def verify_file():
         #print("File Created\n")
         return True
 
-url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
 
-headers = {
-    'x-rapidapi-host': "mashape-community-urban-dictionary.p.rapidapi.com",
-    'x-rapidapi-key': "e3115142camsh5f670bda2cc09cdp13d620jsn1218432bf1ec"
-    }
-
-querry_list = input_term.split (",")
     
 def Process_user_input_and_server_response(user_input_term):
 #    for items in range(len(querry_list)):
@@ -79,32 +72,74 @@ def Process_user_input_and_server_response(user_input_term):
             return_List.append(items["definition"])
         return return_List
 
+url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
 
-if verify_file() == True:
-    data = query_json()
-    #print("\nThis is the data returned form .json file\n" + str(data))
-    for term in querry_list:
-        if str(term) in data:
-            print("\nItem found in file\n")
-            #print(str(data[str(term)]))
-            # results_from_query = Process_user_input_and_server_response(term)
-            # for x in range(len(results_from_query)):
-            #     print("\nDefinition -->" + str(results_from_query[x]) + "\n")
+headers = {
+    'x-rapidapi-host': str(API_HOST),
+    'x-rapidapi-key': str(API_KEY)
+    }
 
-            ### display info in json file
-            print("\nFinding - " + str(term) + " - in text.json file\n")
-            #print("Term - " + str(term) + " - data[term] - " + str(data[term]) + "\n")
-            for item in data[term]:
-                print("Definition found \n --->" + str(item) + "\n")
-        else:
-            #add the item & definitions to json file
-            print("Term to be added --> " + str(term) + "\n")
-            results_from_query = Process_user_input_and_server_response(term)
-            
-            #temp_dict = {str(term):str(list(results_from_query))}
+if len(sys.argv) > 1:
+    print(str(sys.argv))
+    for x in range(len(sys.argv)):
+        #print(" X = " + str(x) + " sys.argv = " + str(sys.argv[int(x)]) + "\n")
+        if int(x) > 0:
+            #print(x)
 
-            #request data and append new info
-            append_file_json(results_from_query,term)
-            for item in results_from_query:
-                print("Definition found \n --->" + str(item) + "\n")
-            pass
+
+            querry_list = sys.argv[1:]
+            print(querry_list)
+
+            if verify_file() == True:
+                data = query_json()
+                for term in querry_list:
+                    if str(term) in data:
+                        print("\nItem found in file")
+
+                        ### display info in json file
+                        print("\nFinding - " + str(term) + " - in text.json file\n")
+
+                        #print("Term - " + str(term) + " - data[term] - " + str(data[term]) + "\n")
+                        for item in data[term]:
+                            print("Definition found \n --->" + str(item) + "\n")
+                        pass
+                    else:
+                        #add the item & definitions to json file
+                        print("Term to be added --> " + str(term) + "\n")
+                        results_from_query = Process_user_input_and_server_response(term)
+
+                        #request data and append new info
+                        append_file_json(results_from_query,term)
+                        for item in results_from_query:
+                            print("Definition found \n --->" + str(item) + "\n")
+                        pass
+else:
+    #no cmd request
+    input_term = input("What term do you want to look for? \nYou can make multiple requests by seperating your input with commas.\n")
+
+    querry_list = input_term.split (",")
+
+    if verify_file() == True:
+        data = query_json()
+        #print("\nThis is the data returned form .json file\n" + str(data))
+        for term in querry_list:
+            if str(term) in data:
+                print("\nItem found in file")
+
+                ### display info in json file
+                print("\nFinding - " + str(term) + " - in text.json file\n")
+
+                #print("Term - " + str(term) + " - data[term] - " + str(data[term]) + "\n")
+                for item in data[term]:
+                    print("Definition found \n --->" + str(item) + "\n")
+                pass
+            else:
+                #add the item & definitions to json file
+                print("Term to be added --> " + str(term) + "\n")
+                results_from_query = Process_user_input_and_server_response(term)
+
+                #request data and append new info
+                append_file_json(results_from_query,term)
+                for item in results_from_query:
+                    print("Definition found \n --->" + str(item) + "\n")
+                pass
