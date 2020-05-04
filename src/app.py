@@ -67,12 +67,19 @@ if len(querry_list) <= 1:
         data = query_json()
         print("\nThis is the data returned form .json file\n" + str(data))
 
-        query_dict = {"term":input_term}
-        response = requests.request("GET", url, headers=headers, params=query_dict)
-        request_definition = process_and_display_data(response)
-        #print(list(request_definition))
-        for items in request_definition:
-            print(items["definition"] + "\n")
+        #check if term is in text.json file
+        if str(input_term) in data:
+            print("\nItem found in file\n")
+            print(str(data[str(input_term)]))
+
+            query_dict = {"term":input_term}
+            response = requests.request("GET", url, headers=headers, params=query_dict)
+            request_definition = process_and_display_data(response)
+            #print(list(request_definition))
+            for items in request_definition:
+                print(items["definition"] + "\n")
+        else:
+            print("\nItem NOT found in file\n")
 
 else:
     if verify_file() == True:
