@@ -15,12 +15,32 @@ API_KEY = os.getenv("API_KEY")
 
 input_term = input("What term do you want to look for? \nYou can make multiple requests by seperating your input with commas.\n")
 
-with open('data.txt') as json_file:
-    data = json.load(json_file)
-if data == None:
-    print("\nData file is empty...\n")
-else:
-    print("\nLoading data file...\n")
+def where_json(file_name):
+    return os.path.exists(file_name)
+
+def query_json():
+    with open('data.json') as json_file:
+        data = json.load(json_file)
+        if data == None:
+            print("\nData file is empty...\n")
+        else:
+            print("\nLoading data file...\n")
+            print(data)
+            return data
+
+def create_file_json():
+    with open('data.json', 'w') as outfile:  
+        json.dump({}, outfile)
+
+def verify_file():
+    if where_json('data.json'):
+        print("File Found\n")
+        return True
+    else:
+        print("file not found\n")
+        create_file_json()
+        print("File Created\n")
+        return True
 
 url = "https://mashape-community-urban-dictionary.p.rapidapi.com/define"
 
@@ -36,19 +56,33 @@ querry_list = input_term.split (",")
 def process_and_display_data(informatoion):
     body = response.json()
     dict_layer1 = body["list"]
-    for items in dict_layer1:
-        print(items["definition"])
+    return dict_layer1
+    
+
 
 if len(querry_list) <= 1:
-    query_dict = {"term":input_term}
-    response = requests.request("GET", url, headers=headers, params=query_dict)
-    process_and_display_data(response)
-else:
-    for x in range(len(querry_list)):
-        #print(x)
-        #print(querry_list[x])
-        query_dict = {}
-        query_dict["term"] = querry_list[x]
-        response = None
+    if verify_file() == True:
+        
+        #check here if word is in the data file
+        data = query_json()
+        print("\nThis is the data returned form .json file\n" + str(data))
+
+        query_dict = {"term":input_term}
         response = requests.request("GET", url, headers=headers, params=query_dict)
-        process_and_display_data(response)
+        request_definition = process_and_display_data(response)
+        #print(list(request_definition))
+        for items in request_definition:
+            print(items["definition"] + "\n")
+
+else:
+    if verify_file() == True:
+        for x in range(len(querry_list)):
+            #print(x)
+            #print(querry_list[x])
+            query_dict = {}
+            query_dict["term"] = querry_list[x]
+            response = None
+            response = requests.request("GET", url, headers=headers, params=query_dict)
+            request_definition = process_and_display_data(response)
+            for items in request_definition:
+                print(items["definition"] + "\n")
